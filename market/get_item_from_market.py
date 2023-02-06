@@ -6,7 +6,7 @@ import json
 
 
 def get_price_item_market(name):
-    with open("market_items.json") as file:
+    with open("./market/market_items.json") as file:
         data = json.load(file)
     try:
         return {item: values for item, values in data.items() if name in item}
@@ -25,18 +25,22 @@ def get_market_price():
             name = item['market_hash_name']
             price = item['price']
             items_market[name] = {'price': price}
-        with open('market_items.json', 'w', encoding='utf-8') as file:
+        with open("./market/market_items.json", 'w', encoding='utf-8') as file:
             json.dump(items_market, file)
-    except Exception:
+    except Exception as ex:
+        print(ex)
         pass
 
 
 def find_item():
-    get_market_price()
-    name = 'Desert Eagle'
-    items = get_price_item_market(name)
-    for item,values in items.items():
-        print(f'{item} : {values}')
+    while True:
+        time.sleep(0.2)
+        print('fff')
+        get_market_price()
+    # name = 'Desert Eagle'
+    # items = get_price_item_market(name)
+    # for item, values in items.items():
+    #     print(f'{item} : {values}')
 
 
 if __name__ == "__main__":

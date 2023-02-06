@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
-from Market import get_price_item_market
+from market import get_price_item_market
 from filters import IsPrivate
 from loader import dp
 from states import finding
