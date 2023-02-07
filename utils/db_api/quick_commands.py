@@ -4,9 +4,9 @@ from utils.db_api.db_gino import db
 from utils.db_api.schemas.user import User
 
 
-async def add_user(user_id: int,):
+async def add_user(user_id: int, notification='off'):
     try:
-        user = User(user_id=user_id)
+        user = User(user_id=user_id,notification=notification)
         await user.create()
     except UniqueViolationError:
         print('Пользователь не добавлен')
@@ -26,6 +26,19 @@ async def select_user(user_id):
     user = await User.query.where(User.user_id == user_id).gino.first()
     return user
 
+
+async def change_notification(user_id):
+    user = await select_user(user_id)
+    try:
+        status = user.notification
+        if status == 'on':
+            await user.update(notification='off').apply()
+            return True
+        elif status == 'off':
+            await user.update(notification='on').apply()
+            return False
+    except Exception:
+        pass
 
 # async def update_status(user_id, new_status):
 #     user = await select_user(user_id)
@@ -66,21 +79,21 @@ async def select_user(user_id):
 #     await user.update(balance=new_user_balance).apply()
 
 
-async def add_price_balance(user_id: int,item_name:str, amount):
-    item = await select_user(user_id)
-    try:
-        amount = float(amount)
-        if (user.balance + amount) >= 0 and (str(amount).split(".")[1].__len__() <= 2):
-            await new_balance(user_id, amount)
-            return True, format(user.balance + amount, '.2f')
-        elif user.balance + amount < 0:
-            return 'no money', 0
-        else:
-            return (False,
-                    f'Некорректное число\n' \
-                    f'Повторите попытку')
-
-    except Exception:
-        return (False,
-                f'Некорректное число\n' \
-                f'Повторите попытку')
+# async def add_price_balance(user_id: int,item_name:str, amount):
+#     item = await select_user(user_id)
+#     try:
+#         amount = float(amount)
+#         if (user.balance + amount) >= 0 and (str(amount).split(".")[1].__len__() <= 2):
+#             await new_balance(user_id, amount)
+#             return True, format(user.balance + amount, '.2f')
+#         elif user.balance + amount < 0:
+#             return 'no money', 0
+#         else:
+#             return (False,
+#                     f'Некорректное число\n' \
+#                     f'Повторите попытку')
+#
+#     except Exception:
+#         return (False,
+#                 f'Некорректное число\n' \
+#                 f'Повторите попытку')
