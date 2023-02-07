@@ -47,7 +47,6 @@ async def change_notification(call: types.CallbackQuery):
 
 @dp.callback_query_handler(text="delete items")
 async def deleteting(call: types.CallbackQuery):
-    print('dawd')
     items = await item_commands.select_user_items(call.from_user.id)
     if len(items)>0:
         buttons = [InlineKeyboardButton(text=item.item_name, callback_data=f'delete_item:{item.item_id}') for item in items]
