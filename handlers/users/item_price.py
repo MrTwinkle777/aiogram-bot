@@ -17,6 +17,12 @@ async def get_price(message: types.Message):
     await finding.print_name.set()
 
 
+@dp.callback_query_handler(text="add item")
+async def get_price(call: types.CallbackQuery):
+    await call.message.answer("Введите название предмета на латинице:")
+    await finding.print_name.set()
+
+
 @dp.message_handler(IsPrivate(), state=finding.print_name)
 async def get_price(message: types.Message, state: FSMContext):
     answer = str(message.text)
@@ -111,7 +117,7 @@ async def get_5_news(call: types.CallbackQuery, state: FSMContext):
         keyboard=[
             [
                 KeyboardButton(text="Добавить в список отслеживаемого"),  ##Подредачить может добавить больше описания
-                KeyboardButton(text="Зарегистрироваться")
+                KeyboardButton(text="Вернуться к выбору")
             ],
         ],
         resize_keyboard=True,
@@ -137,6 +143,10 @@ async def add_item_name(message: types.Message, state: FSMContext):
                              f'Чтобы начать добавлять предметы нажмите команду /start')
         await state.finish()
 
+@dp.message_handler(IsPrivate(), text="Вернуться к выбору", state=finding.add_item)
+async def go_back(message: types.Message, state: FSMContext):
+    await message.delete()
+    await finding.next.set()
 
 @dp.message_handler(IsPrivate(), state=finding.price)
 async def add_item_name(message: types.Message, state: FSMContext):

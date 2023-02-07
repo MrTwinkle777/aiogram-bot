@@ -8,8 +8,8 @@ async def on_startup(dp):
     import middlewares
     middlewares.setup(dp)
 
-    from market import find_item
-    Thread(target=find_item).start()
+    # from market import find_item
+    # Thread(target=find_item).start()
 
     from loader import db
     from utils.db_api.db_gino import on_startup

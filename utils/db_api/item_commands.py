@@ -16,6 +16,9 @@ async def select_item(item_id):
     item = await Items.query.where(Items.item_id == item_id).gino.first()
     return item
 
+async def delete_item(item_id):
+    item = await Items.query.where(Items.item_id == item_id).gino.first()
+    await item.delete()
 
 async def select_user_items(user_id):
     items = await Items.query.where(Items.user_id == user_id).gino.all()
