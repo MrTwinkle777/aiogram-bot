@@ -23,6 +23,4 @@ async def market_notific(items, message):
         if (float(data[name]['price']) < price):
             await message.answer(text=f'Появился {name} \n'
                                       f'''По цене {float(data[name]['price'])} рублей''')
-        print(name)
-        print(price)
         # print(data)
