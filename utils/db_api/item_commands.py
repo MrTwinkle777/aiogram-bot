@@ -38,18 +38,9 @@ async def correct_price(price):
 
 async def change_price(item_id: int, price):
     item = await select_item(item_id)
+    print(item)
     try:
-        price = float(price)
-        if (str(price).split(".")[1].__len__() <= 2) and (1000000 > price > 0):
-            await item.update(price=price).apply()
-            return (True, f'Цена успешна изменена\n' \
-                          f'В данный момент отслеживаемая цена {price}')
-        else:
-            return (False,
-                    f'Некорректное число\n' \
-                    f'Повторите попытку')
+        await item.update(price=price).apply()
+    except Exception as ex:
+        print(ex)
 
-    except Exception:
-        return (False,
-                f'Некорректное число\n' \
-                f'Повторите попытку')

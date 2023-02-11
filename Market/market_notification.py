@@ -9,9 +9,11 @@ async def market_notific(items, message):
                 data = json.load(file)
             break
         except FileNotFoundError:
-            print("The file was not found. Please check the file path and try again.")
+            pass
+            # print("The file was not found. Please check the file path and try again.")
         except json.JSONDecodeError:
-            print("The file could not be parsed as a JSON file. Please check the file format and try again.")
+            pass
+            # print("The file could not be parsed as a JSON file. Please check the file format and try again.")
 
     await asyncio.sleep(1)
     for item in items:

@@ -2,6 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
+from key_boards.default import kb_menu
 from market import get_price_item_market
 from filters import IsPrivate
 from loader import dp
@@ -28,8 +29,13 @@ async def get_price(message: types.Message, state: FSMContext):
     answer = str(message.text)
     items = get_price_item_market(answer)
     if (items == {}):
-        await message.answer('Данного предмета нет на маркете или введено некорректное название')
-        await state.finish()
+        markup = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton("🚫 Прекратить поиск", callback_data="quit")
+            ]
+        ])
+        await message.answer('Предмета нет на маркете или название некорректно\n'
+                             'Повторите попытку', reply_markup=markup)
     else:
         # for item, values in items.items():
         #     i = f'{item} : {values["price"]} руб.'
@@ -41,6 +47,9 @@ async def get_price(message: types.Message, state: FSMContext):
             InlineKeyboardButton("PREV", callback_data=f"prev:0"),
             InlineKeyboardButton(str(0), callback_data="null"),
             InlineKeyboardButton("NEXT", callback_data=f"next:0"),
+        )
+        markup.add(
+            InlineKeyboardButton("🚫 Прекратить поиск", callback_data="quit"),
         )
         await message.answer('Вот что удалось найти', reply_markup=markup)
         await state.update_data(items=items)
@@ -72,6 +81,9 @@ async def prev_page(call: types.CallbackQuery, state: FSMContext):
             InlineKeyboardButton(str(data), callback_data="null"),
             InlineKeyboardButton("NEXT", callback_data=f"next:{data}"),
         )
+    markup.add(
+        InlineKeyboardButton("🚫 Прекратить поиск", callback_data="quit"),
+    )
     await call.message.edit_text(text='Вот что удалось найти', reply_markup=markup)
     await finding.next.set()
 
@@ -101,6 +113,9 @@ async def next_page(call: types.CallbackQuery, state: FSMContext):
             InlineKeyboardButton(str(data), callback_data="null"),
             InlineKeyboardButton(text="NEXT ❌", callback_data="null")
         )
+    markup.add(
+        InlineKeyboardButton("🚫 Прекратить поиск", callback_data="quit"),
+    )
     await call.message.edit_text(text='Вот что удалось найти', reply_markup=markup)
     await finding.next.set()
 
@@ -143,10 +158,12 @@ async def add_item_name(message: types.Message, state: FSMContext):
                              f'Чтобы начать добавлять предметы нажмите команду /start')
         await state.finish()
 
+
 @dp.message_handler(IsPrivate(), text="Вернуться к выбору", state=finding.add_item)
 async def go_back(message: types.Message, state: FSMContext):
     await message.delete()
     await finding.next.set()
+
 
 @dp.message_handler(IsPrivate(), state=finding.price)
 async def add_item_name(message: types.Message, state: FSMContext):
@@ -162,3 +179,9 @@ async def add_item_name(message: types.Message, state: FSMContext):
         await state.finish()
     else:
         await message.answer('Некорректные данные')
+
+
+@dp.callback_query_handler(text='quit', state=list(finding.all_states_names))
+async def quit_to_back(call: types.CallbackQuery, state: FSMContext):
+    await state.finish()
+    await call.message.answer(text='Поиск прекращен',reply_markup=kb_menu)

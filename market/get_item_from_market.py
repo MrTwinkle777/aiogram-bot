@@ -6,8 +6,17 @@ import json
 
 
 def get_price_item_market(name):
-    with open(r"./market/market_items.json") as file:
-        data = json.load(file)
+    while True:
+        try:
+            with open(r"./market/market_items.json", "r") as file:
+                data = json.load(file)
+            break
+        except FileNotFoundError:
+            pass
+            # print("The file was not found. Please check the file path and try again.")
+        except json.JSONDecodeError:
+            pass
+            # print("The file could not be parsed as a JSON file. Please check the file format and try again.")
     try:
         return {item: values for item, values in data.items() if name in item}
     except:
@@ -35,7 +44,6 @@ def get_market_price():
 def find_item():
     while True:
         time.sleep(0.2)
-        print('dawd')
         get_market_price()
     # name = 'Desert Eagle'
     # items = get_price_item_market(name)
