@@ -31,12 +31,14 @@ pip install -r requirements.txt
 
    - Создайте базу данных с именем "marketcsgo" (или другое имя по вашему выбору).
    - В файле `config.py` укажите параметры подключения к вашей базе данных:
+   ```bash
         BOT_TOKEN=YOUR_BOT_TOKEN
 
         ip=localhost
         PGUSER=postgres
         PGPASSWORD=yourpassword
         DATABASE=marketcsgo
+    ```
 
 4. Запустите миграции для создания таблиц в базе данных:
 
